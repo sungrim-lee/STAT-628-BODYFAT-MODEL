@@ -25,13 +25,17 @@ ui = fluidPage(
       
     ),
     mainPanel(
+      
       textOutput("value"),
+      "Thank you for using our app, if you have any questions, please contact us: slee2253@wisc.edu, xli2422@wisc.edu, zou47@wisc.edu",
       tags$head(tags$style("#value{color: black;
                                  font-size: 20px;
                                  font-style: italic;
                                  }"
       )
       )
+      
+      
     )
   )
   ,
@@ -42,10 +46,19 @@ ui = fluidPage(
 
 server <- function(input, output) {
   bdyfat = reactive({
+    if (!is.numeric(input$x1)){
+      stop(safeError("Please enter numeric inputs."))
+    }
+    if (!is.numeric(input$x2)){
+      stop(safeError("Please enter numeric inputs."))
+    }
     get_bdyfat(input$x1, input$x2)
   })
   
   output$value <- renderText({
+    if (!bdyfat()>0 ) {
+      stop(safeError("Negative bodyfat. Please check your inputs. "))
+    }
     paste("Your estimated bodyfat is ", bdyfat(), "%.", sep = "")
   })
   
@@ -53,4 +66,4 @@ server <- function(input, output) {
 
 app <- shinyApp(ui, server)
 # Run in browser
-runGadget(ui, server, viewer = browserViewer(browser = getOption("browser")))
+#runGadget(ui, server, viewer = browserViewer(browser = getOption("browser")))
