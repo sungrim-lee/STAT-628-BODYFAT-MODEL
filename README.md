@@ -16,4 +16,4 @@
 ### 3. Diagnostics, similar to 2., implement codes in the script in order or knit the rmd file immediately.
 ### 4. For the Shiny App, Open a R studio and Import the Shiny App.R code file, and excute it in order.
 
-### [https://bpuj0r-max-zou.shinyapps.io/bodyfat_shiny/](Shiny App Link)
+### Shiny App Link https://bpuj0r-max-zou.shinyapps.io/bodyfat_shiny/ 
