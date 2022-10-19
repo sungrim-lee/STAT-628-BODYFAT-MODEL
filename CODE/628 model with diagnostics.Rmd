@@ -1,0 +1,70 @@
+---
+title: "modeling"
+output: html_document
+date: "2022-10-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+bf <- read.csv("BodyFat.csv",header = TRUE)
+```
+
+```{r}
+fat_den <- lm(bf$BODYFAT~bf$DENSITY)
+plot(bf$DENSITY,bf$BODYFAT)
+#fit a linear model between density and bodyfat
+```
+
+```{r}
+pre_fat <- predict(fat_den,data.frame(bf$DENSITY))
+bf1 <- bf
+bf1$dis <- abs(pre_fat-bf1$BODYFAT)
+#Calculate the difference between actual body fat and predicted body fat
+bf1 <- bf1[order(-bf1[,18]),]
+bf1 <- bf1[-which(bf1$dis>1),]
+#Delete rows with difference greater than 1
+bf1 <- bf1[-which(bf1$BODYFAT<5),]
+#Delete rows with bodyfat lower tan 5
+```
+
+```{r}
+bf1[which(bf1$HEIGHT<60),]
+bf1 <- bf1[-which(bf1$HEIGHT<60),]
+#Delete the rows with height lower than 60
+```
+```{r}
+bf1 <- bf1[,c(1,2,4,5,6,10,17)]
+head(bf1)
+#Keep the feature age, height, weight, abdomen, wrist and delete the rest.
+```
+
+```{r}
+library(olsrr)
+mod <- lm(bf1$BODYFAT~bf1$AGE+bf1$WEIGHT+bf1$HEIGHT+bf1$ABDOMEN+bf1$WRIST)
+ols_step_all_possible(mod)
+```
+
+
+
+```{r}
+bestmod <- lm(bf1$BODYFAT~bf1$WEIGHT+bf1$ABDOMEN)
+summary(bestmod)
+```
+```{r, fig.width= 9, fig.height=3}
+par(mfrow = c(1, 3))
+# residual plot to diagnose linearity and homoskedasticity
+#plot(bestmod, 1)
+plot(fitted(bestmod), resid(bestmod), main = "Residual vs. Fitted Plot", xlab = "Residuals", ylab = "Fitted Values")
+abline(0,0)
+
+#Normality 
+qqnorm(resid(bestmod))
+qqline(resid(bestmod)) 
+
+#influence
+plot(bestmod, which = 4)
+```
+
